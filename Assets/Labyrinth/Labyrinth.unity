@@ -135,6 +135,9 @@ GameObject:
   - component: {fileID: 1106718816}
   - component: {fileID: 1106718819}
   - component: {fileID: 1106718818}
+  - component: {fileID: 1106718821}
+  - component: {fileID: 1106718822}
+  - component: {fileID: 1106718823}
   m_Layer: 0
   m_Name: Labyrinth
   m_TagString: Untagged
@@ -196,8 +199,48 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0a2c9070ca388e4a8ad38365e9e6ccd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CreatorPrefab: {fileID: 1753844392329030269, guid: 3474ba015dd5bcb4caac00eb8140d641, type: 3}
   wall: {fileID: 11400000, guid: 900fb06fc045be74bb75b389f96599e1, type: 2}
+  TimePerStep: 0
+--- !u!114 &1106718821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1106718815}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 029c8be32fad44c45a2a607ec80a523f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SolverType: 0
+  tileExplore: {fileID: 11400000, guid: ede990eab03fb3c4a8282ea729519b93, type: 2}
+  tileSolution: {fileID: 11400000, guid: ea62c5ffca113ac408ce42bcafdb7005, type: 2}
+  TimePerStep: 0.11
+--- !u!114 &1106718822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1106718815}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c6374d16986d3c4cad12aae25694a75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1106718823
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1106718815}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b647313cc45d7ab459264c3190f632ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2073988647
 GameObject:
   m_ObjectHideFlags: 0

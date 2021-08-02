@@ -15,37 +15,63 @@ public class LabyrinthBuilder : MonoBehaviour
     public readonly int OpenLeft = 1 << 1;
     public readonly int OpenBot = 1 << 2;
     public readonly int OpenRight = 1 << 3;
-    
+
+
+    readonly List<int> ColorMap = new List<int>();
+
     public int GetCell(Vector2Int coordinates)
     {
-        int delta = CoordinatesToDelta(coordinates);
-        return Labyrinth[delta];
+        int index = GetCellIndex(coordinates);
+        return Labyrinth[index];
+    }
+    public int GetCell(int index)
+    {
+        return Labyrinth[Mathf.Clamp(index, 0, Labyrinth.Count - 1)];
     }
 
-    public void GenNewLabyrinth()
+    public void InitializeLabyrinth()
     {
-        InitializeLabyrinth();
-        List<int> ColorMap = CreateColorMap();
+        Labyrinth.Clear();
+        for (int i = 0; i < Height * Width; i++)
+            Labyrinth.Add(0);
+
+        InitializeColorMap();
+
+        Labyrinth[0] = OpenBot;
+        Labyrinth[Labyrinth.Count - 1] = OpenTop;
+    }
+    public bool GenStepLabyrinth()
+    {
+        if (IsColorMapUnicolor())
+            return true;
 
         List<Vector2Int> directions = new List<Vector2Int> { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
+       
+        int index1;
+        int index2;
 
-        while (!IsColorMapUnicolor(ColorMap))
+        Vector2Int coordinates;
+        Vector2Int direction;
+
+        do
         {
             int x = Random.Range(0, Width);
             int y = Random.Range(0, Height);
 
-            Vector2Int coordinates = new Vector2Int(x, y);
-            Vector2Int direction = directions[Random.Range(0, 4)];
+            coordinates = new Vector2Int(x, y);
+            direction = directions[Random.Range(0, 4)];
 
-            int delta1 = CoordinatesToDelta(coordinates);
-            int delta2 = CoordinatesToDelta(coordinates + direction);
-            
-            if (ColorMap[delta1] == ColorMap[delta2])
-                continue;
+            index1 = GetCellIndex(coordinates);
+            index2 = GetCellIndex(coordinates + direction);
 
-            FillColor(ColorMap, coordinates, ColorMap[delta2]);
-            LinkCells(coordinates, coordinates + direction);
         }
+        while (ColorMap[index1] == ColorMap[index2]);
+         
+
+        FillColor(coordinates, ColorMap[index2]);
+        LinkCells(coordinates, coordinates + direction);
+
+        return false;
     }
     void SetInBounds(ref Vector2Int coordinates)
     {
@@ -55,20 +81,18 @@ public class LabyrinthBuilder : MonoBehaviour
         coordinates.Set(x, y);
     }
 
-    int CoordinatesToDelta(Vector2Int coordinates)
+    public int GetCellIndex(Vector2Int coordinates)
     {
         SetInBounds(ref coordinates);
         
         return coordinates.x + coordinates.y * Width;
     }
 
-    Vector2Int DeltaToCoordinates(int delta)
+    public Vector2Int GetCellCoordinates(int index)
     {
-        int x = delta % Width;
-        int y = delta / Width;
-
-        Vector2Int coordinates =  new Vector2Int(x, y);
+        Vector2Int coordinates = new Vector2Int(index % Width, index / Width);
         SetInBounds(ref coordinates);
+
         return coordinates;
     }
 
@@ -76,38 +100,38 @@ public class LabyrinthBuilder : MonoBehaviour
     void LinkCells(Vector2Int cell1, Vector2Int cell2)
     {
         Vector2Int relative = cell2 - cell1;
-        int delta1 = CoordinatesToDelta(cell1);
-        int delta2 = CoordinatesToDelta(cell2);
+        int index1 = GetCellIndex(cell1);
+        int index2 = GetCellIndex(cell2);
 
         if (relative == Vector2Int.right)
         {
-            Labyrinth[delta1] |= OpenRight;
-            Labyrinth[delta2] |= OpenLeft;
+            Labyrinth[index1] |= OpenRight;
+            Labyrinth[index2] |= OpenLeft;
             return;
         }
         if (relative == Vector2Int.left)
         {
-            Labyrinth[delta1] |= OpenLeft;
-            Labyrinth[delta2] |= OpenRight;
+            Labyrinth[index1] |= OpenLeft;
+            Labyrinth[index2] |= OpenRight;
             return;
         }
         if (relative == Vector2Int.down)
         {
-            Labyrinth[delta1] |= OpenBot;
-            Labyrinth[delta2] |= OpenTop;
+            Labyrinth[index1] |= OpenBot;
+            Labyrinth[index2] |= OpenTop;
             return;
         }
         if (relative == Vector2Int.up)
         {
-            Labyrinth[delta1] |= OpenTop;
-            Labyrinth[delta2] |= OpenBot;
+            Labyrinth[index1] |= OpenTop;
+            Labyrinth[index2] |= OpenBot;
             return;
         }
 
         Debug.LogError("" + cell1 + " and " + cell2 + " are not adjacent cells");
     }
 
-    void FillColor(List<int> colorMap, Vector2Int cell, int color)
+    void FillColor(Vector2Int cell, int color)
     {
         List<Vector2Int> SeenCells = new List<Vector2Int>();
         SeenCells.Add(cell);
@@ -115,14 +139,14 @@ public class LabyrinthBuilder : MonoBehaviour
         while(SeenCells.Count > 0) //Breadth-first exploration of the graph
         {
             Vector2Int coordinates = SeenCells[0];
-            int delta = CoordinatesToDelta(coordinates);
+            int index = GetCellIndex(coordinates);
             SeenCells.RemoveAt(0);
 
-            if (colorMap[delta] == color)
+            if (ColorMap[index] == color)
                 continue;
 
-            colorMap[delta] = color;
-            int currentCell = Labyrinth[delta];
+            ColorMap[index] = color;
+            int currentCell = Labyrinth[index];
 
             if ((currentCell & OpenTop) != 0)
                 SeenCells.Add(coordinates + Vector2Int.up);
@@ -135,32 +159,20 @@ public class LabyrinthBuilder : MonoBehaviour
         }
     }
 
-    bool IsColorMapUnicolor(List<int> colorMap)
+    bool IsColorMapUnicolor()
     {
-        int color = colorMap[0];
-        foreach (int cell in colorMap)
+        int color = ColorMap[0];
+        foreach (int cell in ColorMap)
             if (cell != color)
                 return false;
         return true;
     }
 
-    List<int> CreateColorMap()
+    void InitializeColorMap()
     {
-        List<int> ColorMap = new List<int>();
+        ColorMap.Clear();
         for (int i = 0; i < Height * Width; i++)
             ColorMap.Add(i);
-
-        return ColorMap;
-    }
-
-    void InitializeLabyrinth()
-    {
-        Labyrinth.Clear();
-        for (int i = 0; i < Height * Width; i++)
-            Labyrinth.Add(0);
-
-        Labyrinth[0] = OpenBot;
-        Labyrinth[Labyrinth.Count - 1] = OpenTop;
     }
 
 }
