@@ -60,7 +60,7 @@
 
 ### On Unity
 
- On edit mode, you can modify the object _"Labyrinth"_ to specify how the builder and the solver should behave :
+ In edit mode, you can modify the object _"Labyrinth"_ to specify how the builder and the solver should behave :
 
  - You can modify the height and width of the maze in the component _"Labyrinth Builder"_ (although a maze too big will not be entirely displayed in the screen)
  
@@ -68,7 +68,7 @@
 
  - You can modify how much time is spent on each building step or solving step, by modifying the _"Time Per Step"_ field in respectively the _"Labyrinth Builder View"_ and the _"Labyrinth Solver View"_ components.
 
- ![Time per steps](ReadmePictures/LabyrinthTimePerStep.png)
+ ![Time per steps](ReadMePictures/LabyrinthTimePerStep.png)
 
  - You can choose between a breadth first approach or a depth first approach to solving the maze in the _"Labyrinth Solver View"_
 
@@ -85,14 +85,14 @@
 
 ### Implementation
 
- We first decide on an arbitrery real positive threshold. 
- Then, for each metaballs in the scene, we compute a number of points P. 
- Each point is the result of an unit vector v, at an angle, and multiplied by a scalar k.
- The scalar k is first set to a low value, then we compute the global metaball value of the vector (v * k). If the value is lower than the threshold, we increase it until it is higher.
+ We first decide on an arbitrary real positive threshold (by default, 1).<br>
+ Then, for each metaball in the scene, we compute a number of points.<br>
+ Each point is the result of an unit vector v, at an angle a, and multiplied by a scalar k.<br>
+ The scalar k is first set to a low value, then we compute the global metaball value of the vector (k * v). If the value is higher than the threshold, we increase k until it is lower.<br>
  
  The global metaball value of a vector is the sum of the mass of each metaball divided by the distance between the center of the metaball and the vector.
 
- Once every points of P is computed, we set the perimeter of the metaball to be the list of points P.
+ Once every point of a metaball is computed, we set the perimeter of the metaball to be this list of points.
 
 ### On Unity
 
