@@ -216,7 +216,7 @@ MonoBehaviour:
   SolverType: 0
   tileExplore: {fileID: 11400000, guid: ede990eab03fb3c4a8282ea729519b93, type: 2}
   tileSolution: {fileID: 11400000, guid: ea62c5ffca113ac408ce42bcafdb7005, type: 2}
-  TimePerStep: 0.11
+  TimePerStep: 0.1
 --- !u!114 &1106718822
 MonoBehaviour:
   m_ObjectHideFlags: 0
