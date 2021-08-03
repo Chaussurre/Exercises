@@ -200,7 +200,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   wall: {fileID: 11400000, guid: 900fb06fc045be74bb75b389f96599e1, type: 2}
-  TimePerStep: 0
+  TimePerStep: 0.1
 --- !u!114 &1106718821
 MonoBehaviour:
   m_ObjectHideFlags: 0
